@@ -1,0 +1,80 @@
+#include<string.h>
+#include<stdio.h>
+#include<stdlib.h>
+
+char * longestPalindrome(char * s){
+    int max = 1;
+    int left = 0;
+    int right = 0;
+    int len = strlen(s);
+    
+    if (len == 1)
+        return s;
+    
+    for (int i = 0;i < len; i++) {
+        /* 考虑中心对称的情况 */
+        if (i > 0 && i < len - 1 && s[i - 1] == s[i + 1]) {
+            int l;
+            for (l = 2;;l++) {
+                if (i - l < 0 || i + l >= len) 
+                    break;
+                else if (s[i - l] != s[i + l])    
+                    break;
+            }
+            
+            if(2 * l - 1 > max) {
+                max = 2 * l - 1;
+                left = i - l + 1;
+                right = i + l - 1;
+            }
+                                  
+        }
+        
+        /* 考虑左右对称，无中心轴的情况 */
+        if (i > 0 && s[i - 1] == s[i]) {
+            int l;
+            for (l = 1;;l++) {
+                if (i - l - 1 < 0 || i + l >= len) 
+                    break;
+                else if (s[i - l - 1] != s[i + l])    
+                    break;
+            }
+            
+            if(2 * l > max) {
+                max = 2 * l;
+                left = i - l;
+                right = i + l - 1;
+            }
+        }
+        
+        /* 考虑左右对称，无中心轴的情况 */
+        if (i < len - 1 && s[i] == s[i + 1]) {
+            int l;
+            for (l = 1;;l++) {
+                if (i - l < 0 || i + l + 1 >= len) 
+                    break;
+                else if (s[i - l] != s[i + l + 1])    
+                    break;
+            }
+            
+            if(2 * l > max) {
+                max = 2 * l;
+                left = i - l + 1;
+                right = i + l;
+            }
+        }
+    }
+    
+    printf("left:%d",left);
+    printf("right:%d",right);
+    printf("max:%d",max);
+    
+    /* 最后才赋值，减少开销 */
+    char *sub = (char *)malloc(sizeof(char) * (max + 1));
+    int t;
+    for (t = 0;t < max;t++)
+        sub[t] = s[left + t];
+    sub[t] = '\0';
+    return sub;
+}
+
